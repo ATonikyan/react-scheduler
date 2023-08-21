@@ -48,6 +48,7 @@ function App() {
           { label: "7", value: 15 },
           { label: "8", value: 16 },
         ],
+        customWeeks: [-1, 0, 1, 2, 3],
       }}
       // events={generateRandomEvents(200)}
     />

@@ -50,6 +50,7 @@ export interface WeekProps {
   navigation?: boolean;
   disableGoToDay?: boolean;
   timeRanges?: { label: string; value: number }[];
+  customWeeks?: number[];
 }
 
 const Week = () => {
@@ -82,6 +83,7 @@ const Week = () => {
     cellRenderer,
     disableGoToDay,
     headRenderer,
+    customWeeks,
   } = week!;
   const _weekStart = startOfWeek(selectedDate, { weekStartsOn: weekStartOn });
   const daysList = weekDays.map((d) => addDays(_weekStart, d));
@@ -183,6 +185,85 @@ const Week = () => {
     });
   };
 
+  const GridWrapper = ({ weekDate, headerHeight, recousedEvents, resource }: any) => {
+    return (
+      <>
+        <TableGrid
+          days={weekDate.length}
+          ref={headersRef}
+          sticky="1"
+          stickyNavitation={stickyNavitation}
+        >
+          <span className="rs__cell rs__time"></span>
+          {weekDate.map((date: any, i: number) => (
+            <span
+              key={i}
+              className={`rs__cell rs__header ${isToday(date) ? "rs__today_cell" : ""}`}
+              style={{ height: headerHeight }}
+            >
+              {typeof headRenderer === "function" ? (
+                <div>{headRenderer(date)}</div>
+              ) : (
+                <TodayTypo
+                  date={date}
+                  onClick={!disableGoToDay ? handleGotoDay : undefined}
+                  locale={locale}
+                />
+              )}
+              {renderMultiDayEvents(recousedEvents, date)}
+            </span>
+          ))}
+        </TableGrid>
+        {/* Time Cells */}
+        <TableGrid days={weekDate.length} ref={bodyRef}>
+          {hours.map((h, i) => (
+            <Fragment key={i}>
+              <span style={{ height: CELL_HEIGHT }} className="rs__cell rs__header rs__time">
+                <Typography variant="caption">
+                  {week?.timeRanges ? h.label : format(h.value, hFormat, { locale })}
+                </Typography>
+              </span>
+              {weekDate.map((date: any, ii: number) => {
+                const start = new Date(`${format(date, "yyyy/MM/dd")} ${format(h.value, hFormat)}`);
+                const end = addMinutes(start, step);
+                const field = resourceFields.idField;
+                return (
+                  <span
+                    style={{ height: CELL_HEIGHT }}
+                    key={ii}
+                    className={`rs__cell ${isToday(date) ? "rs__today_cell" : ""}`}
+                  >
+                    {/* Events of each day - run once on the top hour column */}
+                    {i === 0 && (
+                      <TodayEvents
+                        todayEvents={filterTodayEvents(recousedEvents, date, timeZone)}
+                        today={date}
+                        minuteHeight={MINUTE_HEIGHT}
+                        startHour={startHour}
+                        step={step}
+                        direction={direction}
+                        timeZone={timeZone}
+                      />
+                    )}
+                    <Cell
+                      start={start}
+                      end={end}
+                      day={date}
+                      height={CELL_HEIGHT}
+                      resourceKey={field}
+                      resourceVal={resource ? resource[field] : null}
+                      cellRenderer={cellRenderer}
+                    />
+                  </span>
+                );
+              })}
+            </Fragment>
+          ))}
+        </TableGrid>
+      </>
+    );
+  };
+
   const renderTable = (resource?: DefaultRecourse) => {
     let recousedEvents = events;
     if (resource) {
@@ -201,106 +282,40 @@ const Week = () => {
 
     return (
       <>
-        {/* Header days */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(2, 1fr)",
-            gap: "10px",
-          }}
-        >
-          {[-1, 0, 1, 2, 3].map((i) => {
-            const weekDate = daysList.map((d) => {
-              const a = new Date(d);
-              a.setDate(a.getDate() + i * 7);
-              return a;
-            });
-
-            return (
-              <div key={i}>
-                <div>
-                  <TableGrid
-                    days={weekDate.length}
-                    ref={headersRef}
-                    sticky="1"
-                    stickyNavitation={stickyNavitation}
-                  >
-                    <span className="rs__cell rs__time"></span>
-                    {weekDate.map((date, i) => (
-                      <span
-                        key={i}
-                        className={`rs__cell rs__header ${isToday(date) ? "rs__today_cell" : ""}`}
-                        style={{ height: headerHeight }}
-                      >
-                        {typeof headRenderer === "function" ? (
-                          <div>{headRenderer(date)}</div>
-                        ) : (
-                          <TodayTypo
-                            date={date}
-                            onClick={!disableGoToDay ? handleGotoDay : undefined}
-                            locale={locale}
-                          />
-                        )}
-                        {renderMultiDayEvents(recousedEvents, date)}
-                      </span>
-                    ))}
-                  </TableGrid>
-                  {/* Time Cells */}
-                  <TableGrid days={weekDate.length} ref={bodyRef}>
-                    {hours.map((h, i) => (
-                      <Fragment key={i}>
-                        <span
-                          style={{ height: CELL_HEIGHT }}
-                          className="rs__cell rs__header rs__time"
-                        >
-                          <Typography variant="caption">
-                            {week?.timeRanges ? h.label : format(h.value, hFormat, { locale })}
-                          </Typography>
-                        </span>
-                        {weekDate.map((date, ii) => {
-                          const start = new Date(
-                            `${format(date, "yyyy/MM/dd")} ${format(h.value, hFormat)}`
-                          );
-                          const end = addMinutes(start, step);
-                          const field = resourceFields.idField;
-                          return (
-                            <span
-                              style={{ height: CELL_HEIGHT }}
-                              key={ii}
-                              className={`rs__cell ${isToday(date) ? "rs__today_cell" : ""}`}
-                            >
-                              {/* Events of each day - run once on the top hour column */}
-                              {i === 0 && (
-                                <TodayEvents
-                                  todayEvents={filterTodayEvents(recousedEvents, date, timeZone)}
-                                  today={date}
-                                  minuteHeight={MINUTE_HEIGHT}
-                                  startHour={startHour}
-                                  step={step}
-                                  direction={direction}
-                                  timeZone={timeZone}
-                                />
-                              )}
-                              <Cell
-                                start={start}
-                                end={end}
-                                day={date}
-                                height={CELL_HEIGHT}
-                                resourceKey={field}
-                                resourceVal={resource ? resource[field] : null}
-                                cellRenderer={cellRenderer}
-                              />
-                            </span>
-                          );
-                        })}
-                      </Fragment>
-                    ))}
-                  </TableGrid>
+        {customWeeks ? (
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(2, 1fr)",
+              gap: "10px",
+            }}
+          >
+            {customWeeks.map((i) => {
+              const weekDate = daysList.map((d) => {
+                const a = new Date(d);
+                a.setDate(a.getDate() + i * 7);
+                return a;
+              });
+              return (
+                <div key={i}>
+                  <GridWrapper
+                    weekDate={weekDate}
+                    headerHeight={headerHeight}
+                    recousedEvents={recousedEvents}
+                    resource={resources}
+                  />
                 </div>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        ) : (
+          <GridWrapper
+            weekDate={daysList}
+            headerHeight={headerHeight}
+            recousedEvents={recousedEvents}
+            resource={resources}
+          />
+        )}
       </>
     );
   };
