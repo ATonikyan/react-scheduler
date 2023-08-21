@@ -110,10 +110,12 @@ export const traversCrossingEvents = (
 };
 
 export const calcMinuteHeight = (cellHeight: number, step: number) => {
+  console.log(cellHeight, step);
   return Math.ceil(cellHeight) / step;
 };
 
 export const calcCellHeight = (tableHeight: number, hoursLength: number) => {
+  console.log("tableHeigh", tableHeight);
   return Math.max(tableHeight / hoursLength, 60);
 };
 

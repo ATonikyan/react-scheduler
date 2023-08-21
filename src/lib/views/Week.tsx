@@ -1,5 +1,5 @@
 import { useEffect, useCallback, Fragment } from "react";
-import { Grid, Typography } from "@mui/material";
+import { Grid, Paper, Typography } from "@mui/material";
 import {
   startOfWeek,
   addDays,
@@ -202,7 +202,13 @@ const Week = () => {
     return (
       <>
         {/* Header days */}
-        <Grid container spacing={2}>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(2, 1fr)",
+            gap: "10px",
+          }}
+        >
           {[-1, 0, 1, 2, 3].map((i) => {
             const weekDate = daysList.map((d) => {
               const a = new Date(d);
@@ -211,88 +217,90 @@ const Week = () => {
             });
 
             return (
-              <Grid key={i} item xs={6}>
-                <TableGrid
-                  days={weekDate.length}
-                  ref={headersRef}
-                  sticky="1"
-                  stickyNavitation={stickyNavitation}
-                >
-                  <span className="rs__cell rs__time"></span>
-                  {weekDate.map((date, i) => (
-                    <span
-                      key={i}
-                      className={`rs__cell rs__header ${isToday(date) ? "rs__today_cell" : ""}`}
-                      style={{ height: headerHeight }}
-                    >
-                      {typeof headRenderer === "function" ? (
-                        <div>{headRenderer(date)}</div>
-                      ) : (
-                        <TodayTypo
-                          date={date}
-                          onClick={!disableGoToDay ? handleGotoDay : undefined}
-                          locale={locale}
-                        />
-                      )}
-                      {renderMultiDayEvents(recousedEvents, date)}
-                    </span>
-                  ))}
-                </TableGrid>
-                {/* Time Cells */}
-                <TableGrid days={weekDate.length} ref={bodyRef}>
-                  {hours.map((h, i) => (
-                    <Fragment key={i}>
+              <div key={i}>
+                <div>
+                  <TableGrid
+                    days={weekDate.length}
+                    ref={headersRef}
+                    sticky="1"
+                    stickyNavitation={stickyNavitation}
+                  >
+                    <span className="rs__cell rs__time"></span>
+                    {weekDate.map((date, i) => (
                       <span
-                        style={{ height: CELL_HEIGHT }}
-                        className="rs__cell rs__header rs__time"
+                        key={i}
+                        className={`rs__cell rs__header ${isToday(date) ? "rs__today_cell" : ""}`}
+                        style={{ height: headerHeight }}
                       >
-                        <Typography variant="caption">
-                          {week?.timeRanges ? h.label : format(h.value, hFormat, { locale })}
-                        </Typography>
+                        {typeof headRenderer === "function" ? (
+                          <div>{headRenderer(date)}</div>
+                        ) : (
+                          <TodayTypo
+                            date={date}
+                            onClick={!disableGoToDay ? handleGotoDay : undefined}
+                            locale={locale}
+                          />
+                        )}
+                        {renderMultiDayEvents(recousedEvents, date)}
                       </span>
-                      {weekDate.map((date, ii) => {
-                        const start = new Date(
-                          `${format(date, "yyyy/MM/dd")} ${format(h.value, hFormat)}`
-                        );
-                        const end = addMinutes(start, step);
-                        const field = resourceFields.idField;
-                        return (
-                          <span
-                            style={{ height: CELL_HEIGHT }}
-                            key={ii}
-                            className={`rs__cell ${isToday(date) ? "rs__today_cell" : ""}`}
-                          >
-                            {/* Events of each day - run once on the top hour column */}
-                            {i === 0 && (
-                              <TodayEvents
-                                todayEvents={filterTodayEvents(recousedEvents, date, timeZone)}
-                                today={date}
-                                minuteHeight={MINUTE_HEIGHT}
-                                startHour={startHour}
-                                step={step}
-                                direction={direction}
-                                timeZone={timeZone}
+                    ))}
+                  </TableGrid>
+                  {/* Time Cells */}
+                  <TableGrid days={weekDate.length} ref={bodyRef}>
+                    {hours.map((h, i) => (
+                      <Fragment key={i}>
+                        <span
+                          style={{ height: CELL_HEIGHT }}
+                          className="rs__cell rs__header rs__time"
+                        >
+                          <Typography variant="caption">
+                            {week?.timeRanges ? h.label : format(h.value, hFormat, { locale })}
+                          </Typography>
+                        </span>
+                        {weekDate.map((date, ii) => {
+                          const start = new Date(
+                            `${format(date, "yyyy/MM/dd")} ${format(h.value, hFormat)}`
+                          );
+                          const end = addMinutes(start, step);
+                          const field = resourceFields.idField;
+                          return (
+                            <span
+                              style={{ height: CELL_HEIGHT }}
+                              key={ii}
+                              className={`rs__cell ${isToday(date) ? "rs__today_cell" : ""}`}
+                            >
+                              {/* Events of each day - run once on the top hour column */}
+                              {i === 0 && (
+                                <TodayEvents
+                                  todayEvents={filterTodayEvents(recousedEvents, date, timeZone)}
+                                  today={date}
+                                  minuteHeight={MINUTE_HEIGHT}
+                                  startHour={startHour}
+                                  step={step}
+                                  direction={direction}
+                                  timeZone={timeZone}
+                                />
+                              )}
+                              <Cell
+                                start={start}
+                                end={end}
+                                day={date}
+                                height={CELL_HEIGHT}
+                                resourceKey={field}
+                                resourceVal={resource ? resource[field] : null}
+                                cellRenderer={cellRenderer}
                               />
-                            )}
-                            <Cell
-                              start={start}
-                              end={end}
-                              day={date}
-                              height={CELL_HEIGHT}
-                              resourceKey={field}
-                              resourceVal={resource ? resource[field] : null}
-                              cellRenderer={cellRenderer}
-                            />
-                          </span>
-                        );
-                      })}
-                    </Fragment>
-                  ))}
-                </TableGrid>
-              </Grid>
+                            </span>
+                          );
+                        })}
+                      </Fragment>
+                    ))}
+                  </TableGrid>
+                </div>
+              </div>
             );
           })}
-        </Grid>
+        </div>
       </>
     );
   };

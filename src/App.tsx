@@ -20,8 +20,9 @@ function App() {
   return (
     <Scheduler
       ref={calendarRef}
+      height={600}
       events={EVENTS}
-      view={"month"}
+      // view={"month"}
       month={{
         weekDays: [0, 1, 2, 3, 4, 5, 6],
         weekStartOn: 1,
