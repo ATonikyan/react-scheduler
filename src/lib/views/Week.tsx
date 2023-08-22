@@ -185,7 +185,7 @@ const Week = () => {
     });
   };
 
-  const GridWrapper = ({ weekDate, headerHeight, recousedEvents, resource }: any) => {
+  const OneWeek = ({ weekDate, headerHeight, recousedEvents, resource, i }: any) => {
     return (
       <>
         <TableGrid
@@ -298,7 +298,8 @@ const Week = () => {
               });
               return (
                 <div key={i}>
-                  <GridWrapper
+                  <OneWeek
+                    i={i}
                     weekDate={weekDate}
                     headerHeight={headerHeight}
                     recousedEvents={recousedEvents}
@@ -309,7 +310,7 @@ const Week = () => {
             })}
           </div>
         ) : (
-          <GridWrapper
+          <OneWeek
             weekDate={daysList}
             headerHeight={headerHeight}
             recousedEvents={recousedEvents}
