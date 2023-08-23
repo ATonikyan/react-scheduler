@@ -267,7 +267,8 @@ export interface SchedulerProps {
   onEventDrop?(
     droppedOn: Date,
     updatedEvent: ProcessedEvent,
-    originalEvent: ProcessedEvent
+    originalEvent: ProcessedEvent,
+    htmlEvent?: any
   ): Promise<ProcessedEvent | void>;
   /**
    *

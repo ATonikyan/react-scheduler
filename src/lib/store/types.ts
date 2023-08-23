@@ -23,6 +23,7 @@ export interface Store extends SchedulerState {
     eventId: string,
     droppedStartTime: Date,
     resourceKey?: string,
-    resourceVal?: string | number
+    resourceVal?: string | number,
+    htmlEvent?: any
   ): void;
 }

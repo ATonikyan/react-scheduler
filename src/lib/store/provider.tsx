@@ -89,7 +89,8 @@ export const StoreProvider = ({ children, initial }: Props) => {
     eventId: string,
     startTime: Date,
     resKey?: string,
-    resVal?: string | number
+    resVal?: string | number,
+    htmlEvent?: any
   ) => {
     // Get dropped event
     const droppedEvent = state.events.find((e) => {
@@ -144,7 +145,7 @@ export const StoreProvider = ({ children, initial }: Props) => {
     // Remote
     try {
       triggerLoading(true);
-      const _event = await state.onEventDrop(startTime, updatedEvent, droppedEvent);
+      const _event = await state.onEventDrop(startTime, updatedEvent, droppedEvent, htmlEvent);
       if (_event) {
         confirmEvent(_event, "edit");
       }

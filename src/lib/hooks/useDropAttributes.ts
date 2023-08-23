@@ -34,7 +34,7 @@ export const useDropAttributes = ({ start, end, resourceKey, resourceVal }: Prop
       e.preventDefault();
       e.currentTarget.style.backgroundColor = "";
       const eventId = e.dataTransfer.getData("text");
-      onDrop(eventId, start, resourceKey, resourceVal);
+      onDrop(eventId, start, resourceKey, resourceVal, e);
     },
     [resourceKey]: resourceVal,
   };
