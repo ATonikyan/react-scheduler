@@ -221,16 +221,18 @@ const OneWeek = ({ weekDate, headerHeight, recousedEvents, resource, i }: any) =
 };
 
 export const MemoOneWeek = memo(OneWeek, (prevProps, nextProps) => {
-  return prevProps.recousedEvents === nextProps.recousedEvents;
-});
+  if (prevProps.recousedEvents.length !== nextProps.recousedEvents.length) {
+    return false;
+  }
 
-// (prevProps,nextProps) => {
-//   console.log(prevProps.i);
-//   console.log(prevProps,nextProps);
-//   return nextProps.i !== 0;
-//
-//
-// }
+  for (let i = 0; i < prevProps.recousedEvents.length; i++) {
+    if (prevProps.recousedEvents[i] !== nextProps.recousedEvents[i]) {
+      return false;
+    }
+  }
+
+  return true;
+});
 
 OneWeek.displayName = "OneWeek";
 

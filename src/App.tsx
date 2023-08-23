@@ -3,6 +3,7 @@ import { EVENTS } from "./events";
 import { useRef } from "react";
 import { DayHours, ProcessedEvent, RemoteQuery, SchedulerRef } from "./lib/types";
 import { WeekDays } from "./lib/views/Month";
+import { Button } from "@mui/material";
 
 function App() {
   const calendarRef = useRef<SchedulerRef>(null);
@@ -76,6 +77,14 @@ function App() {
         headRenderer: (day) => {
           return <></>;
         },
+      }}
+      onEventDrop={(
+        droppedOn: Date,
+        updatedEvent: ProcessedEvent,
+        originalEvent: ProcessedEvent,
+        htmlEvent: any
+      ) => {
+        return new Promise((res) => res(updatedEvent));
       }}
       week={{
         weekDays: [0, 1, 2, 3, 4, 5, 6],
