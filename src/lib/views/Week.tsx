@@ -1,4 +1,4 @@
-import { useEffect, useCallback, Fragment } from "react";
+import React, { useEffect, useCallback, Fragment } from "react";
 import { Grid, Paper, Typography } from "@mui/material";
 import {
   startOfWeek,
@@ -35,6 +35,7 @@ import { TableGrid } from "../styles/styles";
 import { MULTI_DAY_EVENT_HEIGHT } from "../helpers/constants";
 import useSyncScroll from "../hooks/useSyncScroll";
 import useStore from "../hooks/useStore";
+import OneWeek, { MemoOneWeek } from "../custom/OneWeek";
 
 export interface WeekProps {
   weekDays: WeekDays[];
@@ -141,129 +142,6 @@ const Week = () => {
     }
   }, [fetchEvents, getRemoteEvents]);
 
-  const renderMultiDayEvents = (events: ProcessedEvent[], today: Date) => {
-    const isFirstDayInWeek = isSameDay(weekStart, today);
-    const allWeekMulti = filterMultiDaySlot(events, daysList, timeZone);
-
-    const multiDays = allWeekMulti
-      .filter((e) => (isBefore(e.start, weekStart) ? isFirstDayInWeek : isSameDay(e.start, today)))
-      .sort((a, b) => b.end.getTime() - a.end.getTime());
-    return multiDays.map((event, i) => {
-      const hasPrev = isBefore(startOfDay(event.start), weekStart);
-      const hasNext = isAfter(endOfDay(event.end), weekEnd);
-      const eventLength =
-        differenceInDaysOmitTime(hasPrev ? weekStart : event.start, hasNext ? weekEnd : event.end) +
-        1;
-      const prevNextEvents = events.filter((e) =>
-        isFirstDayInWeek
-          ? false
-          : e.event_id !== event.event_id && //Exclude it's self
-            isWithinInterval(today, {
-              start: getTimeZonedDate(e.start, timeZone),
-              end: getTimeZonedDate(e.end, timeZone),
-            })
-      );
-
-      let index = i;
-      if (prevNextEvents.length) {
-        index += prevNextEvents.length;
-      }
-
-      return (
-        <div
-          key={event.event_id}
-          className="rs__multi_day"
-          style={{
-            top: index * MULTI_SPACE + 45,
-            width: `${99.9 * eventLength}%`,
-            overflowX: "hidden",
-          }}
-        >
-          <EventItem event={event} hasPrev={hasPrev} hasNext={hasNext} multiday />
-        </div>
-      );
-    });
-  };
-
-  const OneWeek = ({ weekDate, headerHeight, recousedEvents, resource, i }: any) => {
-    return (
-      <>
-        <TableGrid
-          days={weekDate.length}
-          ref={headersRef}
-          sticky="1"
-          stickyNavitation={stickyNavitation}
-        >
-          <span className="rs__cell rs__time"></span>
-          {weekDate.map((date: any, i: number) => (
-            <span
-              key={i}
-              className={`rs__cell rs__header ${isToday(date) ? "rs__today_cell" : ""}`}
-              style={{ height: headerHeight }}
-            >
-              {typeof headRenderer === "function" ? (
-                <div>{headRenderer(date)}</div>
-              ) : (
-                <TodayTypo
-                  date={date}
-                  onClick={!disableGoToDay ? handleGotoDay : undefined}
-                  locale={locale}
-                />
-              )}
-              {renderMultiDayEvents(recousedEvents, date)}
-            </span>
-          ))}
-        </TableGrid>
-        {/* Time Cells */}
-        <TableGrid days={weekDate.length} ref={bodyRef}>
-          {hours.map((h, i) => (
-            <Fragment key={i}>
-              <span style={{ height: CELL_HEIGHT }} className="rs__cell rs__header rs__time">
-                <Typography variant="caption">
-                  {week?.timeRanges ? h.label : format(h.value, hFormat, { locale })}
-                </Typography>
-              </span>
-              {weekDate.map((date: any, ii: number) => {
-                const start = new Date(`${format(date, "yyyy/MM/dd")} ${format(h.value, hFormat)}`);
-                const end = addMinutes(start, step);
-                const field = resourceFields.idField;
-                return (
-                  <span
-                    style={{ height: CELL_HEIGHT }}
-                    key={ii}
-                    className={`rs__cell ${isToday(date) ? "rs__today_cell" : ""}`}
-                  >
-                    {/* Events of each day - run once on the top hour column */}
-                    {i === 0 && (
-                      <TodayEvents
-                        todayEvents={filterTodayEvents(recousedEvents, date, timeZone)}
-                        today={date}
-                        minuteHeight={MINUTE_HEIGHT}
-                        startHour={startHour}
-                        step={step}
-                        direction={direction}
-                        timeZone={timeZone}
-                      />
-                    )}
-                    <Cell
-                      start={start}
-                      end={end}
-                      day={date}
-                      height={CELL_HEIGHT}
-                      resourceKey={field}
-                      resourceVal={resource ? resource[field] : null}
-                      cellRenderer={cellRenderer}
-                    />
-                  </span>
-                );
-              })}
-            </Fragment>
-          ))}
-        </TableGrid>
-      </>
-    );
-  };
-
   const renderTable = (resource?: DefaultRecourse) => {
     let recousedEvents = events;
     if (resource) {
@@ -298,11 +176,16 @@ const Week = () => {
               });
               return (
                 <div key={i}>
-                  <OneWeek
+                  <MemoOneWeek
                     i={i}
                     weekDate={weekDate}
                     headerHeight={headerHeight}
-                    recousedEvents={recousedEvents}
+                    recousedEvents={recousedEvents.filter(
+                      (e) =>
+                        weekDate[0] <= e.start &&
+                        e.start <=
+                          new Date(new Date(weekDate[6]).setDate(weekDate[6].getDate() + 1))
+                    )}
                     resource={resources}
                   />
                 </div>
