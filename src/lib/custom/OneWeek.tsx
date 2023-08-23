@@ -142,10 +142,6 @@ const OneWeek = ({ weekDate, headerHeight, recousedEvents, resource, i }: any) =
     });
   };
 
-  useEffect(() => {
-    console.log("one Week", i);
-  }, [recousedEvents, i]);
-
   return (
     <>
       <TableGrid
