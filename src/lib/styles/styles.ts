@@ -1,4 +1,4 @@
-import { Paper, alpha, styled } from "@mui/material";
+import { Paper, alpha, styled, Grid } from "@mui/material";
 
 export const Wrapper = styled("div")<{ dialog: number }>(({ theme, dialog }) => ({
   position: "relative",
@@ -199,5 +199,11 @@ export const TimeIndicatorBar = styled("div")(({ theme }) => ({
   "& > div:last-of-type": {
     borderTop: `solid 2px ${theme.palette.error.light}`,
     width: "100%",
+  },
+}));
+
+export const WeekGridContainer = styled(Grid)(({ theme }) => ({
+  "*": {
+    boxSizing: "unset",
   },
 }));

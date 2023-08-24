@@ -3,7 +3,6 @@ import { Grid, Paper, Typography } from "@mui/material";
 import {
   startOfWeek,
   addDays,
-  format,
   eachMinuteOfInterval,
   isSameDay,
   isBefore,
@@ -15,8 +14,6 @@ import {
   addMinutes,
   set,
 } from "date-fns";
-import TodayTypo from "../components/common/TodayTypo";
-import EventItem from "../components/events/EventItem";
 import { CellRenderedProps, DayHours, DefaultRecourse, ProcessedEvent } from "../types";
 import { WeekDays } from "./Month";
 import {
@@ -29,13 +26,11 @@ import {
   getTimeZonedDate,
 } from "../helpers/generals";
 import { WithResources } from "../components/common/WithResources";
-import Cell from "../components/common/Cell";
-import TodayEvents from "../components/events/TodayEvents";
-import { TableGrid } from "../styles/styles";
 import { MULTI_DAY_EVENT_HEIGHT } from "../helpers/constants";
 import useSyncScroll from "../hooks/useSyncScroll";
 import useStore from "../hooks/useStore";
 import OneWeek, { MemoOneWeek } from "../custom/OneWeek";
+import { WeekGridContainer } from "../styles/styles";
 
 export interface WeekProps {
   weekDays: WeekDays[];
@@ -161,13 +156,7 @@ const Week = () => {
     return (
       <>
         {customWeeks ? (
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(2, 1fr)",
-              gap: "10px",
-            }}
-          >
+          <WeekGridContainer container spacing={2}>
             {customWeeks.map((i) => {
               const weekDate = daysList.map((d) => {
                 const a = new Date(d);
@@ -175,7 +164,7 @@ const Week = () => {
                 return a;
               });
               return (
-                <div key={i}>
+                <Grid item xs={12} lg={6} md={12} key={i}>
                   <MemoOneWeek
                     i={i}
                     weekDate={weekDate}
@@ -188,10 +177,10 @@ const Week = () => {
                     )}
                     resource={resources}
                   />
-                </div>
+                </Grid>
               );
             })}
-          </div>
+          </WeekGridContainer>
         ) : (
           <OneWeek
             weekDate={daysList}
