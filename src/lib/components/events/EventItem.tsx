@@ -133,21 +133,6 @@ const EventItem = ({ event, multiday, hasPrev, hasNext, showdate = true }: Event
           )}
         </div>
         <div style={{ padding: "5px 10px" }}>
-          <Typography
-            style={{ display: "flex", alignItems: "center", gap: 8 }}
-            color="textSecondary"
-            variant="caption"
-            noWrap
-          >
-            <EventNoteRoundedIcon />
-            {hideDates
-              ? translations.event.allDay
-              : `${format(event.start, `dd MMMM yyyy ${hFormat}`, {
-                  locale: locale,
-                })} - ${format(event.end, `dd MMMM yyyy ${hFormat}`, {
-                  locale: locale,
-                })}`}
-          </Typography>
           {hasResource.length > 0 && (
             <Typography
               style={{ display: "flex", alignItems: "center", gap: 8 }}

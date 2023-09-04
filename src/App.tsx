@@ -3,6 +3,9 @@ import { EVENTS } from "./events";
 import { useRef } from "react";
 import { DayHours, SchedulerRef } from "./lib/types";
 import { WeekDays } from "./lib/views/Month";
+import { Typography } from "@mui/material";
+import EventNoteRoundedIcon from "@mui/icons-material/EventNoteRounded";
+import { format } from "date-fns";
 
 function App() {
   const calendarRef = useRef<SchedulerRef>(null);
@@ -21,7 +24,7 @@ function App() {
     <Scheduler
       ref={calendarRef}
       events={EVENTS}
-      view={"month"}
+      view={"week"}
       month={{
         weekDays: [0, 1, 2, 3, 4, 5, 6],
         weekStartOn: 1,
@@ -38,15 +41,27 @@ function App() {
         endHour: 16,
         step: 60,
         timeRanges: [
-          { label: "1", value: 9 },
-          { label: "2", value: 10 },
-          { label: "3", value: 11 },
-          { label: "4", value: 12 },
-          { label: "5", value: 13 },
-          { label: "6", value: 14 },
-          { label: "7", value: 15 },
-          { label: "8", value: 16 },
+          { label: "1-2", value: 9 },
+          { label: "3-4", value: 10 },
+          { label: "5-6", value: 11 },
+          { label: "15:00-16:00", value: 12 },
+          { label: "16:00-17:00", value: 13 },
+          { label: "17:00-18:00", value: 14 },
+          { label: "18:00-19:00", value: 15 },
         ],
+      }}
+      viewerExtraComponent={() => {
+        return (
+          <Typography
+            style={{ display: "flex", alignItems: "center", gap: 8 }}
+            color="textSecondary"
+            variant="caption"
+            noWrap
+          >
+            <EventNoteRoundedIcon />
+            04 September 2023 11:00 AM - 04 September 2023 12:00
+          </Typography>
+        );
       }}
       // events={generateRandomEvents(200)}
     />
