@@ -116,7 +116,7 @@ function App() {
             noWrap
           >
             <EventNoteRoundedIcon />
-            04 September 2023 11:00 AM - 04 September 2023 12:00
+            04 September 2023 11:00 AM - 04 September 2023 12:00!
           </Typography>
         );
       }}
