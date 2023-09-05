@@ -47,6 +47,7 @@ export interface WeekProps {
   disableGoToDay?: boolean;
   timeRanges?: { label: string; value: number }[];
   customWeeks?: number[];
+  gridProps?: { xs: number; md: number; lg: number };
 }
 
 const Week = () => {
@@ -76,10 +77,8 @@ const Week = () => {
     startHour,
     endHour,
     step,
-    cellRenderer,
-    disableGoToDay,
-    headRenderer,
     customWeeks,
+    gridProps = { xs: 12, md: 12, lg: 6 },
   } = week!;
   const _weekStart = startOfWeek(selectedDate, { weekStartsOn: weekStartOn });
   const daysList = weekDays.map((d) => addDays(_weekStart, d));
@@ -164,7 +163,7 @@ const Week = () => {
                 return a;
               });
               return (
-                <Grid item xs={12} lg={6} md={12} key={i}>
+                <Grid item {...gridProps} key={i}>
                   <MemoOneWeek
                     i={i}
                     weekDate={weekDate}

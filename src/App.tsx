@@ -105,6 +105,7 @@ function App() {
           { label: "18:00-19:00", value: 15 },
         ],
         customWeeks: [-3, -2, -1, 0, 1, 2, 3, 4],
+        gridProps: { xs: 12, md: 12, lg: 12 },
       }}
       viewerExtraComponent={() => {
         return (
