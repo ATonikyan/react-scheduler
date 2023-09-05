@@ -47,7 +47,7 @@ export interface WeekProps {
   disableGoToDay?: boolean;
   timeRanges?: { label: string; value: number }[];
   customWeeks?: number[];
-  gridProps?: { xs: number; md: number; lg: number };
+  gridProps?: number | number[];
 }
 
 const Week = () => {
@@ -71,15 +71,7 @@ const Week = () => {
     stickyNavitation,
   } = useStore();
 
-  const {
-    weekStartOn,
-    weekDays,
-    startHour,
-    endHour,
-    step,
-    customWeeks,
-    gridProps = { xs: 12, md: 12, lg: 6 },
-  } = week!;
+  const { weekStartOn, weekDays, startHour, endHour, step, customWeeks, gridProps = 6 } = week!;
   const _weekStart = startOfWeek(selectedDate, { weekStartsOn: weekStartOn });
   const daysList = weekDays.map((d) => addDays(_weekStart, d));
   const weekStart = startOfDay(daysList[0]);
@@ -156,14 +148,19 @@ const Week = () => {
       <>
         {customWeeks ? (
           <WeekGridContainer container spacing={2}>
-            {customWeeks.map((i) => {
+            {customWeeks.map((i, index) => {
               const weekDate = daysList.map((d) => {
                 const a = new Date(d);
                 a.setDate(a.getDate() + i * 7);
                 return a;
               });
               return (
-                <Grid item {...gridProps} key={i}>
+                <Grid
+                  item
+                  md={12}
+                  lg={Array.isArray(gridProps) ? gridProps[index] : gridProps}
+                  key={i}
+                >
                   <MemoOneWeek
                     i={i}
                     weekDate={weekDate}
