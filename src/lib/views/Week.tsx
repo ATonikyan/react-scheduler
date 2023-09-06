@@ -48,6 +48,8 @@ export interface WeekProps {
   timeRanges?: { label: string; value: number }[];
   customWeeks?: number[];
   gridProps?: number | number[];
+  scrollInto?: number;
+  border?: { border: string; ids: number[] | number };
 }
 
 const Week = () => {

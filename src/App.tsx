@@ -6,6 +6,7 @@ import { WeekDays } from "./lib/views/Month";
 import { Typography, Button } from "@mui/material";
 import EventNoteRoundedIcon from "@mui/icons-material/EventNoteRounded";
 import { format } from "date-fns";
+import * as events from "events";
 
 function App() {
   const calendarRef = useRef<SchedulerRef>(null);
@@ -70,8 +71,9 @@ function App() {
     <Scheduler
       ref={calendarRef}
       height={600}
-      getRemoteEvents={fetchRemote}
+      // getRemoteEvents={fetchRemote}
       // view={"month"}
+      events={EVENTS}
       month={{
         weekDays: [0, 1, 2, 3, 4, 5, 6],
         weekStartOn: 1,
@@ -105,7 +107,9 @@ function App() {
           { label: "18:00-19:00", value: 15 },
         ],
         customWeeks: [-2, -1, 0, 1, 2],
-        gridProps: [6, 6, 12, 6, 6],
+        gridProps: 12,
+        scrollInto: 2,
+        border: { border: "1px solid #0807A4", ids: 0 },
       }}
       viewerExtraComponent={() => {
         return (

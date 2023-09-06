@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, Fragment, memo } from "react";
+import React, { useEffect, useCallback, Fragment, memo, useRef, useMemo } from "react";
 import { Grid, Paper, Typography } from "@mui/material";
 import {
   startOfWeek,
@@ -38,6 +38,7 @@ import useStore from "../hooks/useStore";
 
 const OneWeek = ({ weekDate, headerHeight, recousedEvents, resource, i }: any) => {
   const { headersRef, bodyRef } = useSyncScroll();
+  const weekRef = useRef<HTMLDivElement>(null);
   const {
     week,
     selectedDate,
@@ -68,6 +69,8 @@ const OneWeek = ({ weekDate, headerHeight, recousedEvents, resource, i }: any) =
     disableGoToDay,
     headRenderer,
     customWeeks,
+    scrollInto,
+    border,
   } = week!;
   const _weekStart = startOfWeek(selectedDate, { weekStartsOn: weekStartOn });
   const daysList = weekDays.map((d) => addDays(_weekStart, d));
@@ -75,6 +78,16 @@ const OneWeek = ({ weekDate, headerHeight, recousedEvents, resource, i }: any) =
   const weekEnd = endOfDay(daysList[daysList.length - 1]);
   const START_TIME = set(selectedDate, { hours: startHour, minutes: 0, seconds: 0 });
   const END_TIME = set(selectedDate, { hours: endHour, minutes: -step, seconds: 0 });
+
+  const drawBorder = useMemo(() => {
+    if (!border) {
+      return false;
+    }
+    if (Array.isArray(border.ids)) {
+      return border.ids.includes(i);
+    }
+    return border.ids === i;
+  }, [border]);
 
   const hours = week?.timeRanges
     ? week?.timeRanges?.map((time) => {
@@ -97,6 +110,11 @@ const OneWeek = ({ weekDate, headerHeight, recousedEvents, resource, i }: any) =
   const MINUTE_HEIGHT = calcMinuteHeight(CELL_HEIGHT, step);
   const MULTI_SPACE = MULTI_DAY_EVENT_HEIGHT;
   const hFormat = hourFormat === "12" ? "hh:mm a" : "HH:mm";
+
+  useEffect(() => {
+    if (weekRef.current && scrollInto && scrollInto === i)
+      weekRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, []);
 
   const renderMultiDayEvents = (events: ProcessedEvent[], today: Date) => {
     const isFirstDayInWeek = isSameDay(weekStart, today);
@@ -143,7 +161,7 @@ const OneWeek = ({ weekDate, headerHeight, recousedEvents, resource, i }: any) =
   };
 
   return (
-    <>
+    <div ref={weekRef} style={{ border: drawBorder ? border?.border : "" }}>
       <TableGrid
         days={weekDate.length}
         ref={headersRef}
@@ -216,7 +234,7 @@ const OneWeek = ({ weekDate, headerHeight, recousedEvents, resource, i }: any) =
           </Fragment>
         ))}
       </TableGrid>
-    </>
+    </div>
   );
 };
 
