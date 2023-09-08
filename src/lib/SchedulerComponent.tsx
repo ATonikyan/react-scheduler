@@ -40,7 +40,7 @@ const SchedulerComponent = forwardRef<SchedulerRef, unknown>(function SchedulerC
         }
       }}
     >
-      {loading && (
+      {loading && view !== "week" && (
         <div className="rs__table_loading">
           <span>
             <CircularProgress size={50} />

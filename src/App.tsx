@@ -69,6 +69,7 @@ function App() {
 
   return (
     <Scheduler
+      view={"month"}
       ref={calendarRef}
       height={600}
       // getRemoteEvents={fetchRemote}
@@ -91,6 +92,7 @@ function App() {
       ) => {
         return new Promise((res) => res(updatedEvent));
       }}
+      loading={true}
       week={{
         weekDays: [0, 1, 2, 3, 4, 5, 6],
         weekStartOn: 1,

@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback, Fragment, memo, useRef, useMemo } from "react";
-import { Grid, Paper, Typography } from "@mui/material";
+import { CircularProgress, Grid, Paper, Typography } from "@mui/material";
 import {
   startOfWeek,
   addDays,
@@ -52,6 +52,8 @@ const OneWeek = ({ weekDate, headerHeight, recousedEvents, resource, i }: any) =
     resourceFields,
     resourceViewMode,
     fields,
+    translations,
+    loading,
     direction,
     locale,
     hourFormat,
@@ -161,7 +163,15 @@ const OneWeek = ({ weekDate, headerHeight, recousedEvents, resource, i }: any) =
   };
 
   return (
-    <div ref={weekRef} style={{ border: drawBorder ? border?.border : "" }}>
+    <div ref={weekRef} style={{ position: "relative", border: drawBorder ? border?.border : "" }}>
+      {loading && (
+        <div className="rs__table_loading">
+          <span>
+            <CircularProgress size={50} />
+            <Typography align="center">{translations.loading}</Typography>
+          </span>
+        </div>
+      )}
       <TableGrid
         days={weekDate.length}
         ref={headersRef}
